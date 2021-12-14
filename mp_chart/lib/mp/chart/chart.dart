@@ -46,11 +46,9 @@ abstract class ChartState<T extends Chart> extends State<T> {
 
     String fileName = DateTime.now().toIso8601String();
     String path = '$directory/$fileName.png';
-    _screenshotController.capture(path: path, pixelRatio: 3.0).then((imgFile) {
-      ImageGallerySaver.saveImage(Uint8List.fromList(imgFile.readAsBytesSync()))
-          .then((value) {
-        imgFile.delete();
-      });
+    _screenshotController.capture(path: path, pixelRatio: 3.0).then((imgFile) async {
+      final value = await ImageGallerySaver.saveImage(Uint8List.fromList(imgFile.readAsBytesSync()));
+      imgFile.delete();
       isCapturing = false;
     }).catchError((error) {
       isCapturing = false;
@@ -73,55 +71,57 @@ abstract class ChartState<T extends Chart> extends State<T> {
         controller: _screenshotController,
         child: Container(
             child: Stack(
-                // Center is a layout widget. It takes a single child and positions it
-                // in the middle of the parent.
+              // Center is a layout widget. It takes a single child and positions it
+              // in the middle of the parent.
                 children: [
-              ConstrainedBox(
-                  constraints: BoxConstraints(
-                      minHeight: double.infinity, minWidth: double.infinity),
-                  child: OptimizedGestureDetector(
-                      tapDown: (details) {
-                        onTapDown(details);
-                      },
-                      singleTapUp: (details) {
-                        onSingleTapUp(details);
-                      },
-                      doubleTapUp: (details) {
-                        onDoubleTapUp(details);
-                      },
-                      moveStart: (details) {
-                        onMoveStart(details);
-                      },
-                      moveUpdate: (details) {
-                        onMoveUpdate(details);
-                      },
-                      moveEnd: (details) {
-                        onMoveEnd(details);
-                      },
-                      scaleStart: (details) {
-                        onScaleStart(details);
-                      },
-                      scaleUpdate: (details) {
-                        onScaleUpdate(details);
-                      },
-                      scaleEnd: (details) {
-                        onScaleEnd(details);
-                      },
-                      dragStart: (details) {
-                        onDragStart(details);
-                      },
-                      dragUpdate: (details) {
-                        onDragUpdate(details);
-                      },
-                      dragEnd: (details) {
-                        onDragEnd(details);
-                      },
-                      needHorizontalConflictFunc:
+                  ConstrainedBox(
+                      constraints: BoxConstraints(
+                          minHeight: double.infinity,
+                          minWidth: double.infinity),
+                      child: OptimizedGestureDetector(
+                          tapDown: (details) {
+                            onTapDown(details);
+                          },
+                          singleTapUp: (details) {
+                            onSingleTapUp(details);
+                          },
+                          doubleTapUp: (details) {
+                            onDoubleTapUp(details);
+                          },
+                          moveStart: (details) {
+                            onMoveStart(details);
+                          },
+                          moveUpdate: (details) {
+                            onMoveUpdate(details);
+                          },
+                          moveEnd: (details) {
+                            onMoveEnd(details);
+                          },
+                          scaleStart: (details) {
+                            onScaleStart(details);
+                          },
+                          scaleUpdate: (details) {
+                            onScaleUpdate(details);
+                          },
+                          scaleEnd: (details) {
+                            onScaleEnd(details);
+                          },
+                          dragStart: (details) {
+                            onDragStart(details);
+                          },
+                          dragUpdate: (details) {
+                            onDragUpdate(details);
+                          },
+                          dragEnd: (details) {
+                            onDragEnd(details);
+                          },
+                          needHorizontalConflictFunc:
                           widget.controller.horizontalConflictResolveFunc,
-                      needVerticalConflictFunc:
+                          needVerticalConflictFunc:
                           widget.controller.verticalConflictResolveFunc,
-                      child: CustomPaint(painter: widget.controller.painter))),
-            ])));
+                          child: CustomPaint(
+                              painter: widget.controller.painter))),
+                ])));
   }
 
   @override
